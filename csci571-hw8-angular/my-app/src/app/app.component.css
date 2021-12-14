@@ -1,0 +1,14 @@
+tr
+{
+    line-height: 30px;
+    min-height: 30px;
+    height: 30px;
+}
+
+.fakelink
+{
+    text-decoration: initial;
+    cursor: pointer;
+    color: #007bff !important;
+    text-decoration: underline !important;
+}

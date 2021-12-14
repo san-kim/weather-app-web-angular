@@ -1,0 +1,299 @@
+
+<div class="parent container col-12 d-flex justify-content-center">
+  <form #userForm="ngForm" id="searchform" class="col-md-11 col-xs-12">
+      <div id="searchformheader" class="form-group row d-flex justify-content-center">
+          <h3 id="searchformheaderlabel1">Weather Search 🌤️</h3>
+      </div>
+      
+      <div class="form-group row d-flex justify-content-center" id="streetlabel">
+          <p class="col-10 col-md-2 col-form-label" style="padding-left: 0px;">Street <span class="redstar" style="color:red">*</span></p>
+          <input class="form-control col-10 col-md-5" id="street" name="street" #streetname="ngModel" (blur)="trimStreet()" [ngClass]="(streetname.touched || streetname.dirty) && streetname.errors ? 'is-invalid' : ''" type="text" [(ngModel)]="searchModel.street" disabled={{searchModel.autodetect}} required>
+          <div class="invalid-feedback col-10 col-md-7 text-right">Please enter a valid street.</div>
+      </div>
+
+      <div class="form-group row d-flex justify-content-center" id="citylabel">
+          <p class="col-10 col-md-2 col-form-label" style="padding-left: 0px;">City <span class="redstar">*</span></p>
+          <input class="form-control col-10 col-md-5" id="city" ngx-google-places-autocomplete [options]='options' (onAddressChange)="handleAddressChange($event)" name="city" type="text" (blur)="trimCity()" [(ngModel)]="searchModel.city" disabled={{searchModel.autodetect}} #cityname="ngModel" autocomplete="off" [ngClass]="(cityname.touched || cityname.dirty) && cityname.errors ? 'is-invalid' : ''" placeholder="" required>
+          <div class="invalid-feedback col-10 col-md-7 text-right">Please enter a valid city.</div>
+      </div>
+
+      <div class="form-group row d-flex justify-content-center" id="statelabel">
+          <p class="col-10 col-md-2 col-form-label" style="padding-left: 0px;">State <span class="redstar">*</span></p>
+          <select class="form-control col-10 col-md-5" name="state" id="state" [(ngModel)]="searchModel.state" disabled={{searchModel.autodetect}} #statename="ngModel" [ngClass]="(statename.touched || statename.dirty) && statename.errors ? 'is-invalid' : ''" required>
+              <option selected="true" disabled="true" value="">Select your state</option>
+              <option value="AL">Alabama</option>
+              <option value="AK">Alaska</option>
+              <option value="AZ">Arizona</option>
+              <option value="AR">Arkansas</option>
+              <option value="CA">California</option>
+              <option value="CO">Colorado</option>
+              <option value="CT">Connecticut</option>
+              <option value="DE">Delaware</option>
+              <option value="FL">Florida</option>
+              <option value="GA">Georgia</option>
+              <option value="HI">Hawaii</option>
+              <option value="ID">Idaho</option>
+              <option value="IL">Illinois</option>
+              <option value="IN">Indiana</option>
+              <option value="IA">Iowa</option>
+              <option value="KS">Kansas</option>
+              <option value="KY">Kentucky</option>
+              <option value="LA">Louisiana</option>
+              <option value="ME">Maine</option>
+              <option value="MD">Maryland</option>
+              <option value="MA">Massachusetts</option>
+              <option value="MI">Michigan</option>
+              <option value="MN">Minnesota</option>
+              <option value="MS">Mississippi</option>
+              <option value="MO">Missouri</option>
+              <option value="MT">Montana</option>
+              <option value="NE">Nebraska</option>
+              <option value="NV">Nevada</option>
+              <option value="NH">New Hampshire</option>
+              <option value="NJ">New Jersey</option>
+              <option value="NM">New Mexico</option>
+              <option value="NY">New York</option>
+              <option value="NC">North Carolina</option>
+              <option value="ND">North Dakota</option>
+              <option value="OH">Ohio</option>
+              <option value="OK">Oklahoma</option>
+              <option value="OR">Oregon</option>
+              <option value="PA">Pennsylvania</option>
+              <option value="RI">Rhode Island</option>
+              <option value="SC">South Carolina</option>
+              <option value="SD">South Dakota</option>
+              <option value="TN">Tennessee</option>
+              <option value="TX">Texas</option>
+              <option value="UT">Utah</option>
+              <option value="VT">Vermont</option> 
+              <option value="VA">Virginia</option>
+              <option value="WA">Washington</option>
+              <option value="WV">West Virginia</option>
+              <option value="WI">Wisconsin</option>
+              <option value="WY">Wyoming</option>
+          </select>
+          <div class="invalid-feedback col-10 col-md-7 text-right">Please enter a valid state.</div>
+      </div>
+
+
+      <hr size="1" class="form-group col-10 col-md-7" color="lightgray" id="searchdivider">
+
+      <div class="form-group row d-flex justify-content-center">
+          <p class="col-10 col-md-2" style="padding-left: 0px;">Auto-detect location <span class="redstar">*</span> </p>  
+          <div class="form-check col-10 col-md-5">
+              <input class="form-check-input" type="checkbox" value="" id="autodetectlocation" name="autodetectlocation" [(ngModel)]="searchModel.autodetect" (click)="autodetectChecked()" style="width:18px; height:18px; margin-top:4px;">
+              <label class="form-check-label" for="autodetectlocation">&ensp;Current Location</label>
+          </div>
+      </div>
+      
+      <div class="form-group row d-flex justify-content-center" id="searchformbuttondiv">
+          <div class="col-10 col-md-7" style="padding-left:0px;">
+              <button class="btn btn-primary" id="searchsubmitbutton" [disabled]="((searchModel.street.length == 0 || searchModel.city.length == 0 || searchModel.state.length == 0) && !searchModel.autodetect) || showProgressBar" type="submit" (click)="formSubmit()"><svg xmlns="assets/images/search.svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg> Search</button>
+              <button id="searchclearbutton" class="btn" (click)="clearInputs(); userForm.form.markAsPristine(); userForm.form.markAsUntouched(); userForm.form.updateValueAndValidity();" style="margin-left:10px;"><img class="img-fluid" src="assets/images/list-nested.svg"> Clear</button>
+          </div>
+      </div>
+  </form>
+</div>
+
+<div class="d-flex justify-content-center">
+
+  <!--Grid column-->
+  <div class="col-11" style="margin-top:30px; padding:0px;">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="activetop" class="nav-tabs nav-pills justify-content-center w-100" style="border-bottom:none;">
+      <li ngbNavItem [ngbNavItem]="1">
+        <a ngbNavLink (click)="setToDetails()">Results</a>
+        <ng-template ngbNavContent>
+          <div class="alert alert-danger text-center" style="margin-top: 40px;" role="alert" *ngIf="resultsExist==false">
+            <b>Sorry!</b> No records found.
+          </div>
+          <p style="margin-top: 40px;"><ngb-progressbar type="info" [value]="progressValue" [striped]="true" [animated]="true" *ngIf="showProgressBar && resultsExist"></ngb-progressbar></p>
+          <div [@animSlider]="cardCounter" *ngIf="showResults===true && resultsExist && !showProgressBar">
+            <div *ngIf="cardCounter===0">
+              <div class="text-center w-100">
+                <p class="h3" style="margin-top: 60px;">Forecast at {{ address }}</p>
+              </div>
+              
+              <div class="row w-100 justify-content-end" style="margin-top:30px;">
+                <div class="justify-content-end">
+                  <button class="btn border" (click)="favoriteIconClicked();">
+                    <svg *ngIf="isFavorite===false" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+                      <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                    </svg>
+                    <svg *ngIf="isFavorite===true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(255,225,53)" class="bi bi-star-fill" viewBox="0 0 16 16">
+                      <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                    </svg>
+                  </button>
+                  <button class="btn" (click)="detailsDay(0)" style="color: darkgray;">Details <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                  </svg></button>
+                </div>
+              </div>
+              
+              <div class="w-100" style="margin-top:30px;">
+                <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs w-100 justify-content-end">
+                  <li [ngbNavItem]="1">
+                    <a ngbNavLink>Day View</a>
+                    <ng-template ngbNavContent>
+                      <div class="table-responsive">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Date</th>
+                              <th scope="col">Status</th>
+                              <th scope="col">Temp. High (° F)</th>
+                              <th scope="col">Temp. Low (° F)</th>
+                              <th scope="col">Wind Speed (mph)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let entry of dailydetailsrowdata; index as i" (click)="detailsDay(i)">
+                              <th scope="row">{{ i + 1 }}</th>
+                              <td><a class="fakelink" (click)="detailsDay(i)">{{ entry.date }}</a></td>
+                              <td>
+                                <img [src]="entry.image" class="mr-2" style="width: 30px; height: 30px;">
+                                {{ entry.status }}
+                              </td>
+                              <td>{{ entry.temphigh | number }}</td>
+                              <td>{{ entry.templow | number }}</td>
+                              <td>{{ entry.windspeed | number }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                      
+                    </ng-template>
+                  </li>
+                  <li [ngbNavItem]="2">
+                    <a ngbNavLink (click)="showDailyTemp();">Daily Temp. Chart</a>
+                    <ng-template ngbNavContent>
+                      <div id="temperaturerangechartdiv" style="height: 400px;"></div>
+                    </ng-template>
+                  </li>
+                  <li [ngbNavItem]="3">
+                    <a ngbNavLink (click)="showMeteogram();">Meteogram</a>
+                    <ng-template ngbNavContent>
+                      <div id="hourlyweatherchartdiv" style="height: 400px;"></div>
+                    </ng-template>
+                  </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="mt-2"></div>
+              </div>
+            </div>
+            <div *ngIf="cardCounter === 1">
+              <div class="row w-100">
+                <div class="col-2">
+                  <button class="btn float-left" (click)="goToMainCard()" style="color:#212529; margin-top: 60px; border:1px solid #212529"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                  </svg> List</button>
+                </div>
+                <div class="col-8 text-center">
+                  <p class="h3" style="margin-top: 60px;">{{ currentDayInfo.date }}</p>
+                </div>
+                <div class="col-2">
+                  <a [href]="twitterurl" class="btn float-right" style="background-color:rgb(8,160,233); color:white; width: 50px; border-radius:20px; margin-top:60px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter" viewBox="0 0 16 16">
+                    <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+                  </svg></a>
+                </div>
+              </div>
+              <div>
+                <div class="table-responsive">
+                  <table class="table table-striped" style="margin-top: 30px;">
+                    <tbody>
+                      <tr>
+                        <th scope="row">Status</th>
+                        <td>{{ currentDayInfo.status }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Max Temperature</th>
+                        <td>{{ currentDayInfo.temphigh }} °F</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Min Temperature</th>
+                        <td>{{ currentDayInfo.templow }} °F</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Apparent Temperature</th>
+                        <td>{{ currentDayInfo.tempapparent }} °F</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Sun Rise Time</th>
+                        <td>{{ currentDayInfo.sunrise }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Sun Set Time</th>
+                        <td>{{ currentDayInfo.sunset }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Humidity</th>
+                        <td>{{ currentDayInfo.humidity }} %</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Wind Speed</th>
+                        <td>{{ currentDayInfo.windspeed }} mph</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Visibility</th>
+                        <td>{{ currentDayInfo.visibility }} mi</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Cloud Cover</th>
+                        <td>{{ currentDayInfo.cloudcover }} %</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <agm-map [zoom]="16" [latitude]="lat" [longitude]="long" style="height:500px;">
+                  <agm-marker [latitude]="lat" [longitude]="long"></agm-marker>
+                </agm-map>
+              </div>
+              
+            </div>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem [ngbNavItem]="2">
+        <a ngbNavLink>Favorites</a>
+        <ng-template ngbNavContent>
+          <div class="alert alert-warning text-center" style="margin-top: 40px;" role="alert" *ngIf="favoritesExist==false">
+            <b>Sorry!</b> No records found.
+          </div>
+          <table class="table table-striped" style="margin-top: 10px;" *ngIf="favoritesExist">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">City</th>
+              <th scope="col">State</th>
+              <th scope="col"> </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let favorite of favoritesList; index as i">
+              <th scope="row">{{ i + 1 }}</th>
+              <td><a class="fakelink" (click)="favoritesDetailsClicked(favorite.lat, favorite.long, favorite.city, favorite.state)">{{ favorite.city }}</a></td>
+              <td><a class="fakelink" (click)="favoritesDetailsClicked(favorite.lat, favorite.long, favorite.city, favorite.state)">{{ favorite.state }}</a></td>
+              <td>
+                <button class="btn" (click)="removeFromFavoritesWithKey(favorite.city + '...' + favorite.state)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="justify-content-center"></div>  
+  </div>
+  <!--Grid column-->
+</div>
+<script async
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+</script>
+
+<router-outlet></router-outlet>
